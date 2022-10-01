@@ -26,17 +26,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	switch (event.type) {
 		case 'payment_intent.succeeded':
 			const paymentIntent = event.data.object;
+			const email = paymentIntent.charges.data[0].billing_details.email;
 
-			const data = await get(paymentIntent.charges.data[0].billing_details.email);
-
-			if (!data?.count) {
-				await create(paymentIntent.charges.data[0].billing_details.email);
+			const data = await get(email);
+			if (!data?.count && email) {
+				await create(email);
 			}
 
-			await updateSubscription(
-				paymentIntent.charges.data[0].billing_details.email,
-				paymentIntent.customer
-			);
+			await updateSubscription(email, paymentIntent.customer);
 			break;
 		default:
 			break;
