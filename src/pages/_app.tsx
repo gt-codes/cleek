@@ -2,6 +2,8 @@ import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { AppRouter } from '@/backend/routers';
 import { withTRPC } from '@trpc/next';
+import Layout from '@/components/layout';
+import Header from '@/components/header';
 
 function getBaseUrl() {
 	if (process.browser) return ''; // Browser should use current path
@@ -11,7 +13,12 @@ function getBaseUrl() {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-	return <Component {...pageProps} />;
+	return (
+		<Layout>
+			<Header />
+			<Component {...pageProps} />
+		</Layout>
+	);
 }
 
 export default withTRPC<AppRouter>({
