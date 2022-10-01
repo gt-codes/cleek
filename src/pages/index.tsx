@@ -3,16 +3,16 @@ import type { NextPage } from 'next';
 
 const Home: NextPage = () => {
 	const utils = trpc.useContext();
-	const { data } = trpc.useQuery(['user.clicks']);
+	const { data } = trpc.useQuery(['user.data']);
 	const { mutate } = trpc.useMutation(['user.click'], {
 		onSuccess: () => {
-			utils.invalidateQueries(['user.clicks']);
+			utils.invalidateQueries(['user.data']);
 		},
 	});
 
 	return (
 		<div className="h-full w-full relative flex flex-col justify-center items-center">
-			<p className="text-9xl absolute top-12 font-black">{data?.clicks}</p>
+			<p className="text-9xl absolute top-12 font-black">{data?.count}</p>
 			<button
 				type="button"
 				onClick={() => mutate()}
