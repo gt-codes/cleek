@@ -34,8 +34,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			}
 
 			await updateSubscription(
-				paymentIntent.customer,
-				paymentIntent.charges.data[0].billing_details.email
+				paymentIntent.charges.data[0].billing_details.email,
+				paymentIntent.customer
 			);
 			break;
 		default:
