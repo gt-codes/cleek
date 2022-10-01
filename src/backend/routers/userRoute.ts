@@ -20,4 +20,11 @@ export const userRoute = createRouter()
 			}
 			return { success: true };
 		},
+	})
+	.query('clicks', {
+		async resolve({ ctx }) {
+			const email = ctx.session?.user?.email as string;
+			const clicks = await get(email);
+			return { clicks };
+		}
 	});

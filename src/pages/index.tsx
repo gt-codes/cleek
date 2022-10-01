@@ -1,13 +1,18 @@
 import { trpc } from '@/lib/trpc';
 import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
 
 const Home: NextPage = () => {
-	const { query } = useRouter();
-	const { mutate } = trpc.useMutation(['user.click']);
+	const utils = trpc.useContext();
+	const { data } = trpc.useQuery(['user.clicks']);
+	const { mutate } = trpc.useMutation(['user.click'], {
+		onSuccess: () => {
+			utils.invalidateQueries(['user.clicks']);
+		},
+	});
 
 	return (
-		<div className="h-full w-full flex flex-col justify-center items-center">
+		<div className="h-full w-full relative flex flex-col justify-center items-center">
+			<p className="text-9xl absolute top-12 font-black">{data?.clicks}</p>
 			<button
 				type="button"
 				onClick={() => mutate()}
