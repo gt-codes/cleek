@@ -21,3 +21,7 @@ export const get = async (key: string) => {
 export const updateCount = async (key: string) => {
 	await redis.hincrby(key, 'count', 1);
 };
+
+export const updateSubscription = async (key: string, value: string) => {
+	await redis.hset(key, { stripeId: value });
+};
