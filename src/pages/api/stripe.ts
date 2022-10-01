@@ -1,6 +1,7 @@
 import { get, create, updateSubscription } from '@/lib/redis';
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
+import { buffer } from 'micro';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET as string, {
 	apiVersion: '2022-08-01',
@@ -10,11 +11,12 @@ const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	let event = req.body;
+	const reqBuffer = await buffer(req);
 
 	if (endpointSecret) {
 		const signature = req.headers['stripe-signature'];
 		try {
-			event = stripe.webhooks.constructEvent(req.body, signature as string, endpointSecret);
+			event = stripe.webhooks.constructEvent(reqBuffer, signature as string, endpointSecret);
 		} catch (err: any) {
 			console.log(`⚠️  Webhook signature verification failed.`, err.message);
 			return res.status(400).json({ message: 'Webhook Error', err });
@@ -37,8 +39,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			);
 			break;
 		default:
-			return;
+			break;
 	}
 
-	res.status(200);
+	res.status(200).json({ received: true });
 }
+
+export const config = {
+	api: {
+		bodyParser: false,
+	},
+};
