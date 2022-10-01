@@ -1,7 +1,7 @@
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import GithubProvider from 'next-auth/providers/github';
 
-export default NextAuth({
+export const authConfig: NextAuthOptions = {
 	session: {
 		strategy: 'jwt',
 		maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -13,4 +13,6 @@ export default NextAuth({
 		}),
 	],
 	secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+export default NextAuth(authConfig);
