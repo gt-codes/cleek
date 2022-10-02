@@ -21,6 +21,8 @@ export const userRoute = createRouter()
 	.query('data', {
 		async resolve({ ctx }) {
 			const email = ctx.session?.user?.email as string;
+			console.log({ fetchingDataFor: email });
+
 			const data = await get(email);
 			return data;
 		},
