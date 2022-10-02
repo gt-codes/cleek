@@ -10,7 +10,7 @@ export const userRoute = createRouter()
 	.mutation('click', {
 		async resolve({ ctx }) {
 			const email = ctx.session?.user?.email as string;
-			console.log({ fetchingDataFor: email });
+			console.log({ fetchingDataFor: email, session: ctx.session });
 
 			const clicks = await get(email);
 
@@ -23,8 +23,7 @@ export const userRoute = createRouter()
 	.query('data', {
 		async resolve({ ctx }) {
 			const email = ctx.session?.user?.email as string;
-			console.log({ fetchingDataFor: email });
-
+			console.log({ fetchingDataFor: email, session: ctx.session });
 			const data = await get(email);
 			return data;
 		},
