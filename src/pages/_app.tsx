@@ -4,6 +4,8 @@ import { AppRouter } from '@/backend/routers';
 import { withTRPC } from '@trpc/next';
 import Layout from '@/components/layout';
 import Header from '@/components/header';
+import { SessionProvider } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 function getBaseUrl() {
 	if (process.browser) return ''; // Browser should use current path
@@ -12,12 +14,17 @@ function getBaseUrl() {
 	return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
 }
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({
+	Component,
+	pageProps: { session, ...pageProps },
+}: AppProps<{ session: Session }>) {
 	return (
-		<Layout>
-			<Header />
-			<Component {...pageProps} />
-		</Layout>
+		<SessionProvider session={session}>
+			<Layout>
+				<Header />
+				<Component {...pageProps} />
+			</Layout>
+		</SessionProvider>
 	);
 }
 

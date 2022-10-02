@@ -18,6 +18,10 @@ export const get = async (key: string) => {
 	return (await redis.hgetall(key)) as Data | null;
 };
 
+export const clear = async (key: string) => {
+	return await redis.del(key);
+};
+
 export const updateCount = async (key: string) => {
 	await redis.hincrby(key, 'count', 1);
 };

@@ -1,5 +1,5 @@
 import { createRouter } from '@/backend/utils/createRouter';
-import { create, get, updateCount } from '@/lib/redis';
+import { clear, create, get, updateCount } from '@/lib/redis';
 import { TRPCError } from '@trpc/server';
 
 export const userRoute = createRouter()
@@ -7,11 +7,16 @@ export const userRoute = createRouter()
 		if (!ctx.session) throw new TRPCError({ code: 'UNAUTHORIZED' });
 		return next();
 	})
+	.mutation('clear', {
+		async resolve({ ctx }) {
+			const email = ctx.session?.user?.email as string;
+			await clear(email);
+			return { success: true };
+		},
+	})
 	.mutation('click', {
 		async resolve({ ctx }) {
 			const email = ctx.session?.user?.email as string;
-			console.log({ fetchingDataFor: email, session: ctx.session });
-
 			const clicks = await get(email);
 
 			if (!clicks) await create(email);
@@ -23,7 +28,6 @@ export const userRoute = createRouter()
 	.query('data', {
 		async resolve({ ctx }) {
 			const email = ctx.session?.user?.email as string;
-			console.log({ fetchingDataFor: email, session: ctx.session });
 			const data = await get(email);
 			return data;
 		},
